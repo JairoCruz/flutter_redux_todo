@@ -25,6 +25,11 @@ class UpdateCompleteTodoAction {
   UpdateCompleteTodoAction(this.index);
 }
 
+class DeleteTodoAction {
+  final int index;
+  DeleteTodoAction(this.index);
+}
+
 enum VisibilityFilter { showAll, showActive, showCompleted }
 
 class AppState {
@@ -54,11 +59,11 @@ AppState todosReducer(AppState state, action) {
     newItem.completed = !newItem.completed;
 
     return state.copywith(todos: state.todos);
-
-    /*  return AppState(
-        todos: List.from(state.todos)..insert(action.index, newItem),
-        visibilityFilter: state.visibilityFilter
-      ); */
+  } else if (action is DeleteTodoAction) {
+    print('antes de ${state.todos.length}');
+    state.todos.removeAt(action.index);
+    print('despues de ${state.todos.length}');
+    return state.copywith(todos: state.todos);
   } else {
     return state;
   }
@@ -126,73 +131,84 @@ class MyHomePage extends StatelessWidget {
           title: const Text('Todo Redux')),
       body: StoreConnector<AppState, List<Todo>>(
         converter: (store) => store.state.todos.toList(),
-        builder: (context, vm) {
-          if (vm.isEmpty) {
+        builder: (context, todos) {
+          if (todos.isEmpty) {
             return const Center(
               child: Text('No hay nada'),
             );
           } else {
             return ListView.builder(
               padding: const EdgeInsets.all(8),
-              itemCount: vm.length,
+              itemCount: todos.length,
               itemBuilder: (context, index) {
-                return
-                    // StoreConnector<AppState, VoidCallback>(
-                    //   converter: (store) {
-                    //     return () => store.dispatch(UpdateCompleteTodoAction(index));
-                    //   },
-                    //   builder: (context, callback) {
-                    //     return TodoItem(todo: vm[index], onCheckboxChanged: callback,);
-                    //   },
-                    // );
-
-                    Card(
-                  child: ListTile(
-                    title: Text(vm[index].task),
-                    trailing: StoreConnector<AppState, VoidCallback>(
-                      converter: (store) {
-                        // Esto puede fallar al actulizar ya que no le podria pasar el index
-                        return () =>
-                            store.dispatch(UpdateCompleteTodoAction(index));
-                      },
-                      builder: (context, callback) {
-                        return Checkbox(
-                            value: vm[index].completed,
-                            onChanged: (value) {
-                              callback();
-                              //store.dispatch(UpdateCompleteTodoAction(index));
-                            });
-                      },
+                return 
+                StoreConnector<AppState, VoidCallback>(
+                  converter: (store) {
+                    return () => store.dispatch(DeleteTodoAction(index));
+                  },
+                  builder: (context, callbackDelete) {
+                    return  Dismissible(
+                      background: Container(
+                        alignment: Alignment.centerRight,
+                        padding: const EdgeInsets.all(14),
+                        color: Colors.red,
+                        child: const Icon(Icons.delete, color: Colors.white,),),
+                  key: Key(todos[index].task),
+                  onDismissed: (direction) {
+                    print('esto se ejecuta');
+                    callbackDelete();
+                  },
+                  child: Card(
+                    child: ListTile(
+                      title: Text(todos[index].task),
+                      trailing: StoreConnector<AppState, VoidCallback>(
+                        converter: (store) {
+                          // Esto puede fallar al actulizar ya que no le podria pasar el index
+                          return () =>
+                              store.dispatch(UpdateCompleteTodoAction(index));
+                        },
+                        builder: (context, callback) {
+                          return Checkbox(
+                              value: todos[index].completed,
+                              onChanged: (value) {
+                                callback();
+                              });
+                        },
+                      ),
                     ),
                   ),
                 );
-                // SizedBox(
-                //   height: 50,
-                //   child: Center(child: Text(vm[index].task))
-                //   );
+                  },);
+               /*  Dismissible(
+                  key: Key(todos[index].toString()),
+                  onDismissed: (direction) {},
+                  child: Card(
+                    child: ListTile(
+                      title: Text(todos[index].task),
+                      trailing: StoreConnector<AppState, VoidCallback>(
+                        converter: (store) {
+                          // Esto puede fallar al actulizar ya que no le podria pasar el index
+                          return () =>
+                              store.dispatch(UpdateCompleteTodoAction(index));
+                        },
+                        builder: (context, callback) {
+                          return Checkbox(
+                              value: todos[index].completed,
+                              onChanged: (value) {
+                                callback();
+                              });
+                        },
+                      ),
+                    ),
+                  ),
+                ); */
               },
-              //separatorBuilder: (BuildContext context, index) => const Divider(),
             );
           }
         },
       ),
-      // floatingActionButton: FloatingActionButton(
-      //   onPressed: () {
-      //     Scaffold.of(context).showBottomSheet<void>(
-      //     (BuildContext context) {
-      //     return Container(
-      //       height: 200,
-      //       color: Colors.amber,
-      //       child: const Center(
-      //         child: Text('Prueba'),
-      //         ),
-      //     );
-      //   },);
-      //   }
-      //   ),
       floatingActionButton: StoreConnector<AppState, VoidCallback>(
         converter: (store) {
-          //return () => store.dispatch(AddTodoAction(Todo(myController.text)));
           return () {
             store.dispatch(AddTodoAction(Todo(myController.text)));
             myController.clear();
@@ -211,9 +227,10 @@ class MyHomePage extends StatelessWidget {
                           height: 200,
                           child: Column(
                             children: [
-                              Text('Task',
-                              textAlign: TextAlign.left,
-                              style: Theme.of(context).textTheme.labelLarge,
+                              Text(
+                                'Task',
+                                textAlign: TextAlign.left,
+                                style: Theme.of(context).textTheme.labelLarge,
                               ),
                               TextField(
                                 controller: myController,
@@ -225,11 +242,9 @@ class MyHomePage extends StatelessWidget {
                               Row(
                                 children: [
                                   Expanded(
-                                    
                                     child: Padding(
                                       padding: const EdgeInsets.all(8.0),
                                       child: FilledButton(
-                                        
                                           onPressed: callback,
                                           child: const Text('Agregar')),
                                     ),
@@ -248,56 +263,3 @@ class MyHomePage extends StatelessWidget {
     );
   }
 }
-
-/* class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
-
-  final String title;
-
-  @override
-  State<MyHomePage> createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
-
-  void _incrementCounter() {
-    setState(() {
-      _counter++;
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    
-    return Scaffold(
-      appBar: AppBar(
-        
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-       
-        title: Text(widget.title),
-      ),
-      body: Center(
-        
-        child: Column(
-         
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text(
-              'You have pushed the button this many times:',
-            ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headlineMedium,
-            ),
-          ],
-        ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
-    );
-  }
-} */
