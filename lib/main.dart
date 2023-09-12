@@ -222,7 +222,7 @@ class MyHomePage extends StatelessWidget {
                   context: context,
                   builder: (BuildContext context) {
                     return Padding(
-                      padding: const EdgeInsets.all(24.0),
+                      padding: EdgeInsets.only(left: 24, right: 24, top: 24, bottom: MediaQuery.of(context).viewInsets.bottom),
                       child: SizedBox(
                           height: 200,
                           child: Column(
@@ -233,6 +233,7 @@ class MyHomePage extends StatelessWidget {
                                 style: Theme.of(context).textTheme.labelLarge,
                               ),
                               TextField(
+                                autofocus: true,
                                 controller: myController,
                                 decoration: const InputDecoration(
                                   border: OutlineInputBorder(),
