@@ -11,10 +11,12 @@ class AppState {
     this.visibilityFilter = VisibilityFilter.showAll,
   });
 
-  AppState copywith({todos, visibilityFilter}) {
+  AppState copywith({todos, visibilityFilter, emptyList}) {
     return AppState(
         todos: todos ?? this.todos,
-        visibilityFilter: visibilityFilter ?? this.visibilityFilter);
+        visibilityFilter: visibilityFilter ?? this.visibilityFilter,
+        );
+        
   }
 }
 

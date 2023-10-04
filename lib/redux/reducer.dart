@@ -5,7 +5,7 @@ AppState todosReducer(AppState state, action) {
   if (action is AddTodoAction) {
     return AppState(
         todos: List.from(state.todos)..add(action.todo),
-        visibilityFilter: state.visibilityFilter
+        visibilityFilter: state.visibilityFilter,
         );
   } else if (action is UpdateCompleteTodoAction) {
     var newItem = state.todos[action.index];

@@ -14,7 +14,8 @@ class _ViewModel {
   _ViewModel(
       {required this.todos,
       required this.onTodoTap,
-      required this.onTodoTapDelete});
+      required this.onTodoTapDelete
+      });
 
   @override
   bool operator ==(Object other) =>
@@ -54,13 +55,17 @@ class VisibleTodoList extends StatelessWidget {
               todos: _getVisibleTodos(
                   store.state.todos, store.state.visibilityFilter),
               onTodoTap: (id) => store.dispatch(UpdateCompleteTodoAction(id)),
-              onTodoTapDelete: (id) => store.dispatch(DeleteTodoAction(id)),
+              onTodoTapDelete: (id) => store.dispatch(DeleteTodoAction(id))
             ),
         builder: (context, viewModel) {
+          if (viewModel.todos.isEmpty){
+                  return const Center(child: Text('No hay datos'),);
+          }
           return ListView.builder(
               itemCount: viewModel.todos.length,
               itemBuilder: (context, index) {
-                return Dismissible(
+                
+                  return Dismissible(
                     onDismissed: (direction) {
                       viewModel.onTodoTapDelete(index);
                     },
