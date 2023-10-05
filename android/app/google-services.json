@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "819584574397",
+    "firebase_url": "https://todolistswitfui.firebaseio.com",
+    "project_id": "todolistswitfui",
+    "storage_bucket": "todolistswitfui.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:819584574397:android:b075b7c18fe545ce2768d4",
+        "android_client_info": {
+          "package_name": "com.example.todo_redux"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "819584574397-jr802624i1t62a5m3bgqu2qth92nqg8o.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBwXQbCC_uYkVjjxk2BLJdS48UqQCxREo8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "819584574397-jr802624i1t62a5m3bgqu2qth92nqg8o.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "819584574397-0ocq5u810r74gpr68nkht8u9v2i3cktn.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.jc.TodoAppFirebase"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
